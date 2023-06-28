@@ -17,3 +17,6 @@ Trabalho relativo ao que se encontra no pdf na pasta assets.
 
 ## Uso 
 Clonar o repositório e rodar paralelamente em terminais diferentes o servidor e o cliente.
+```bash
+git clone https://github.com/mibasFerraz/redes-system-call-select/blob/main/README.md 
+```
