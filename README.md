@@ -20,15 +20,24 @@ Clonar o repositório e rodar paralelamente em terminais diferentes o servidor e
 ```bash
 git clone https://github.com/mibasFerraz/redes-system-call-select/blob/main/README.md 
 ```
+## Vá para a pasta clonada
+```bash
+cd redes-system-call-select
+```
+
 ## Para compilar o servidor 
 ```bash
-gcc servidor.c -o servidor
+gcc server.c -o server
 ```
 ## Para rodar o servidor no ip desejado 
 ```bash
-./servidor 127.0.0.1 8000
+./server 127.0.0.1 8000
 ```
-## Para conectar o cliente
+## Para compilar o client
 ```bash
-telnet 127.0.0.1 8000
+gcc client.c -o client
+```
+## Para conectar o cliente com o servidor
+```bash
+./client 127.0.0.1 8000
 ```
