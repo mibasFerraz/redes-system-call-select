@@ -18,7 +18,7 @@ typedef struct
     int client_sock;
     char name[256];
     int active;
-} client;
+} Client;
 
 typedef struct
 {
@@ -27,10 +27,10 @@ typedef struct
     int quantity;
     int active;
     char name[100];
-    client *clients;
-} room;
+    Client *clients;
+} Room;
 
-room rooms[MAX_ROOMS];
+Room rooms[MAX_ROOMS];
 
 void send_message(int sd, int server_sock, int room_id, int client_id)
 {
@@ -56,13 +56,15 @@ void leave_room(int sd, int room_id, int client_id, int remove_master)
     printf("User %d leaving room %d\n", sd, room_id);
     // When exiting the room, the quantity of clients should be decreased.
     // Remove the descriptor from the master and the room
-    rooms[room_id].clients[client_id].active = 0;
-    rooms[room_id].quantity--;
     if (remove_master == 1)
         FD_CLR(sd, &master);
     FD_CLR(sd, &rooms[room_id].room_fd);
 
-    // If the quantity becomes 0, the room should be closed by making it inactive and deallocating the clients' array
+    if (rooms[room_id].quantity == 0)
+        return;
+    rooms[room_id].clients[client_id].active = 0;
+    rooms[room_id].quantity--;
+
     if (rooms[room_id].quantity == 0)
     {
         free(rooms[room_id].clients);
@@ -93,7 +95,7 @@ int create_room(int limit, char *name)
     rooms[room].active = 1;
     rooms[room].limit = limit;
     strncpy(rooms[room].name, name, strlen(name));
-    rooms[room].clients = malloc(limit * sizeof(client));
+    rooms[room].clients = malloc(limit * sizeof(Client));
 
     // After that, you should instantiate its clients' array and deactivate all present clients.
     // It is also necessary to return the value of the room
@@ -108,7 +110,17 @@ void join_room(int sd, int room_id, char name[])
     printf("User %d entering room %d\n", sd, room_id);
     // To insert into the room, you should increase the quantity, add the descriptor to the room's basket, find an empty position in the room (client.active = 0)
     // and insert its attributes such as socket descriptor, active, and name
+
+    printf("Disconnecting descriptor %d\n", sd);
+
+    char resp_buff[256];
     FD_SET(sd, &rooms[room_id].room_fd);
+    if (rooms[room_id].quantity == rooms[room_id].limit)
+    {
+        snprintf(resp_buff, sizeof(resp_buff), "Error: Room %d is full\n", room_id);
+        send(sd, resp_buff, strlen(resp_buff), 0);
+        return;
+    }
     rooms[room_id].quantity++;
     for (int i = 0; i < rooms[room_id].limit; i++)
     {
@@ -117,6 +129,8 @@ void join_room(int sd, int room_id, char name[])
             rooms[room_id].clients[i].client_sock = sd;
             rooms[room_id].clients[i].active = 1;
             strncpy(rooms[room_id].clients[i].name, name, strlen(name));
+            snprintf(resp_buff, sizeof(resp_buff), "Entering in room %d sucessfuly", room_id);
+            send(sd, resp_buff, strlen(resp_buff), 0);
             break;
         }
     }
@@ -145,7 +159,7 @@ void execute_command(int sd, int room_id, int client_id)
         sleep(0.1);
         for (int i = 0; i < rooms[room_id].limit; i++)
         {
-            client c = rooms[room_id].clients[i];
+            Client c = rooms[room_id].clients[i];
             if (c.active)
             {
                 char name[260];
