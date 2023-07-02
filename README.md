@@ -27,7 +27,7 @@ cd redes-system-call-select
 
 ## Para compilar o servidor 
 ```bash
-gcc server.c -o server
+gcc server.c -o servidor
 ```
 ## Para rodar o servidor no ip desejado 
 ```bash
@@ -35,9 +35,19 @@ gcc server.c -o server
 ```
 ## Para compilar o client
 ```bash
-gcc client.c -o client
+gcc client.c -o cliente
 ```
 ## Para conectar o cliente com o servidor
 ```bash
-./client 127.0.0.1 8000
+./cliente 127.0.0.1 8000
 ```
+##Comandos do menu (/help)
+```bash
+ /exit //- sair da sala
+ /show_users //- listar usuários
+ /show_rooms //- listar salas criadas 
+ /change_room //- mudar de sala
+ /clear //- limpar a tela
+ /bat //- invoca o  Batman taranranran
+```
+
