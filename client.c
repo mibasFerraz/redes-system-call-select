@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     sleep(1);
     close(sock);
     printf("%s\n", buff);
-    printf("Try again later\n");
+    printf("This room is full or doesn't exists. Try to create another room\n");
     exit(1);
   }
   printf("%s\n", buff);

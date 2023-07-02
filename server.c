@@ -49,6 +49,7 @@ void send_message(int sd, int server_sock, int room_id, int client_id)
                 strcat(message, buff);
                 send(j, message, 500, 0);
             }
+            void execute_command(int sd, int room_id, int client_id);
 }
 
 void leave_room(int sd, int room_id, int client_id, int remove_master)
@@ -70,6 +71,7 @@ void leave_room(int sd, int room_id, int client_id, int remove_master)
         free(rooms[room_id].clients);
         rooms[room_id].active = 0;
     }
+    void execute_command(int sd, int room_id, int client_id);
 }
 
 void reset_rooms()
@@ -82,6 +84,7 @@ void reset_rooms()
         rooms[i].quantity = 0;
         rooms[i].active = 0;
     }
+    void execute_command(int sd, int room_id, int client_id);
 }
 
 int create_room(int limit, char *name)
@@ -103,6 +106,7 @@ int create_room(int limit, char *name)
         rooms[room].clients[i].active = 0;
     printf("Created Room with id %d name \"%s\" and limit %d\n", room, rooms[room].name, rooms[room].limit);
     return room;
+    void execute_command(int sd, int room_id, int client_id);
 }
 
 void join_room(int sd, int room_id, char name[])
@@ -171,10 +175,11 @@ void execute_command(int sd, int room_id, int client_id)
             }
         }
         send(sd, "\n\n", 2, 0);
+        void execute_command(int sd, int room_id, int client_id);
     }
 
     // show list of rooms
-    else if (strncmp(buff + 1, "show_rooms", 10) == 0)
+     if (strncmp(buff + 1, "show_rooms", 10) == 0)
     {
         send(sd, "\n===== Rooms =====", 40, 0);
         sleep(0.1);
@@ -186,6 +191,7 @@ void execute_command(int sd, int room_id, int client_id)
                 send(sd, resp_buff, strlen(resp_buff), 0);
             }
         send(sd, "\n\n", 2, 0);
+        void execute_command(int sd, int room_id, int client_id);
     }
 
     // If a client wants to switch rooms, two routines should be executed:
@@ -199,12 +205,14 @@ void execute_command(int sd, int room_id, int client_id)
         strcpy(name, rooms[room_id].clients[client_id].name);
         leave_room(sd, room_id, client_id, 0);
         join_room(sd, new_room, name);
+        void execute_command(int sd, int room_id, int client_id);
     }
     else
     {
         // Sending error message
-        strcpy(resp_buff, "Invalid Command\n");
+        strcpy(resp_buff, "\n");
         send(sd, resp_buff, strlen(resp_buff), 0);
+        void execute_command(int sd, int room_id, int client_id);
     }
 }
 int initialize_server(char *argv[])
